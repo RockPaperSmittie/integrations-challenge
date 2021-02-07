@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  node:
+    container_name: checkout-container
+    image: a588bcf59bb2
+    build:
+        context: ../
+        dockerfile: Dockerfile
+    volumes:
+      - /a588bcf59bb2
+    restart: always
+    tty: true
+    ports:
+     - 4444:4444
