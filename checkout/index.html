@@ -3,25 +3,87 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/styles.css">
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
     <title>Document</title>
-    <style>
-      #root {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 500px;
-      }
-
-      #paypal-button {
-        margin-bottom: 20px;
-      }
-    </style>
   </head>
   <body>
+    <nav class="navbar navbar-light bg-light justify-content-center">
+      <a class="navbar-brand" href="#">
+        <img src="./assets/primer-icon.jpg" width="30" height="30" alt="">
+      </a>
+      <span class="text-muted nav-title">INTEGRATIONS CHALLENGE - CHECKOUT</span>
+    </nav>
+    <!-- TOAST NOTIFICATIONS START -->
+    <div class="mt-2 mr-2" style="position: relative;">
+      <div class="toast fade" data-delay="3000" id="failed-create-order">
+        <div class="toast-header">
+          <img src="./assets/primer-icon.jpg" width="25px" height="25px" class="rounded me-2" alt="primer-icon">
+          <strong class="ml-3">Create Order</strong>
+        </div>
+        <div class="toast-body">
+          <span>Order Could Not Be Created!</span><br>
+          <span>Amount might be incorrectly formatted</span>
+        </div>
+      </div>
+      <div class="toast fade" data-delay="2000" id="success-auth">
+        <div class="toast-header">
+          <img src="./assets/primer-icon.jpg" width="25px" height="25px" class="rounded me-2" alt="primer-icon">
+          <strong class="ml-3">Authorization</strong>
+        </div>
+        <div class="toast-body">
+          Order Successfully Authorized!
+        </div>
+      </div>
+      <div class="toast fade" data-delay="2000" id="success-cancel">
+        <div class="toast-header">
+          <img src="./assets/primer-icon.jpg" width="25px" height="25px" class="rounded me-2" alt="primer-icon">
+          <strong class="ml-3">Cancellation</strong>
+        </div>
+        <div class="toast-body">
+          Order Successfully Cancelled!
+        </div>
+      </div>
+      <div class="toast fade" data-delay="2000" id="failed-auth">
+        <div class="toast-header">
+          <img src="./assets/primer-icon.jpg" width="25px" height="25px" class="rounded me-2" alt="primer-icon">
+          <strong class="ml-3">Authorization</strong>
+        </div>
+        <div class="toast-body">
+          Order Could Not Be Authorized!
+        </div>
+      </div>
+      <div class="toast fade" data-delay="2000" id="failed-cancel">
+        <div class="toast-header">
+          <img src="./assets/primer-icon.jpg" width="25px" height="25px" class="rounded me-2" alt="primer-icon">
+          <strong class="ml-3">Cancellation</strong>
+        </div>
+        <div class="toast-body">
+          Order Already Cancelled!
+        </div>
+      </div>
+    </div>
+    <!-- TOAST NOTIFICATIONS END -->
     <div id="root">
-      <div id="paypal-button"></div>
-      <button disabled="true" id="cancel-button">Cancel Transaction</button>
+      <div class="card" style="width: 400px; height: 200px">
+        <div class="card-header text-center text-muted">
+          PAY USING
+        </div>
+        <div class="card-body d-flex align-items-center">
+          <div class="container-fluid">
+            <div class="row justify-content-center">
+              <div id="paypal-button"></div>
+            </div>
+            <div class="row justify-content-center">
+              <button class="btn btn-outline-secondary mt-3" hidden="true" id="cancel-button">Cancel Transaction</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="setup.js"></script>
     <script src="client.js"></script>

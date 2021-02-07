@@ -9,9 +9,6 @@ import {
   RawCaptureRequest,
 } from '@primer-io/app-framework';
 
-/**
- * Use the HTTP Client to make requests to PayPal's orders API
- */
 import HTTPClient from '../common/HTTPClient';
 
 const PayPalConnection: ProcessorConnection<
@@ -23,30 +20,70 @@ const PayPalConnection: ProcessorConnection<
   website: 'https://paypal.com',
 
   configuration: {
-    accountId:
-      '... Paste something here that uniquely identifies the PayPal account',
-    clientId: '...Paste your sandbox PayPal client ID here...',
-    clientSecret: '...Paste your sandbox PayPal client secret here...',
+    accountId: 'sb-mqwlk5007093@personal.example.com',
+    clientId: 'AULlNwYFGGrps1zPyF2zFESSUfsNJ_CR8f6oYOSMVDVAyLtbGdUoGletw5eiVkmSVD4yJl7kC5al6dzr',
+    clientSecret: 'EOM49KHixELxpWcvjeric1wFgkh6n6fNvVjKXobNO7cQvTXSI2zE_QnbKdGWOtNIm_OMwDRlFFPaeGP3',
   },
 
-  /**
-   * Authorize a PayPal order
-   * Use the HTTPClient and the request info to authorize a paypal order
+  /** 
+   * Authorize specific order by orderId
+   * Use base64 encoded client credentials for authorization
    */
-  authorize(
+  async authorize(
     request: RawAuthorizationRequest<ClientIDSecretCredentials, PayPalOrder>,
   ): Promise<ParsedAuthorizationResponse> {
-    throw new Error('Not Implemented');
+    try {
+      const encodedAuth = Buffer.from(this.configuration.clientId + ':' + this.configuration.clientSecret).toString('base64')
+      const response = await HTTPClient.request(`https://api-m.sandbox.paypal.com/v2/checkout/orders/${request.paymentMethod.orderId}/authorize`, {
+        method: 'post',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Basic " + encodedAuth,
+        },
+         // No request body required by API but required in HTTPRequest type
+        body: ''
+      })
+      const parsedResponseText = JSON.parse(response.responseText)
+      // If status code in 200 range, order is authorized
+      if (response.statusCode.toString().startsWith('2')) {
+        const processorTransactionId = parsedResponseText.purchase_units[0].payments.authorizations[0].id
+        return { processorTransactionId, transactionStatus: 'AUTHORIZED' }
+      }
+      // Return failed order response
+      return { errorMessage: parsedResponseText.message ? parsedResponseText.message : parsedResponseText.error_description, transactionStatus: 'FAILED' }
+    } catch (error) {
+      return Promise.reject(error)
+    }
   },
 
-  /**
-   * Cancel a PayPal order
-   * Use the HTTPClient and the request information to cancel the PayPal order
+ /** 
+   * Cancel specific order by transactionId
+   * Use base64 encoded client credentials for authorization
    */
-  cancel(
+  async cancel(
     request: RawCancelRequest<ClientIDSecretCredentials>,
   ): Promise<ParsedCaptureResponse> {
-    throw new Error('Not Implemented');
+    try {
+      const encodedAuth = Buffer.from(this.configuration.clientId + ':' + this.configuration.clientSecret).toString('base64')
+      const response = await HTTPClient.request(`https://api-m.sandbox.paypal.com/v2/payments/authorizations/${request.processorTransactionId}/void`, {
+        method: 'post',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Basic " + encodedAuth,
+        },
+        // No request body required by API but required in HTTPRequest type
+        body: ''
+      })
+      // Return order successfully cancelled response
+      if (response.statusCode === 204) {
+        return { transactionStatus: 'CANCELLED'}
+      }
+      // Return order cancellation failed response
+      const parsedResponseText = JSON.parse(response.responseText)
+      return { transactionStatus: 'FAILED', declineReason: parsedResponseText.name, errorMessage: parsedResponseText.message}
+    } catch (error) {
+      return Promise.reject(error)
+    }
   },
 
   /**

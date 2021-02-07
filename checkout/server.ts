@@ -15,16 +15,19 @@ const router = express.Router();
 router.get('/config', (req, res) => res.send(PayPal.configuration));
 
 router.post('/authorize', async (req, res) => {
-  const response = await PayPal.authorize({
-    amount: 1299,
-    currencyCode: 'EUR',
-    processorConfig: PayPal.configuration,
-    paymentMethod: {
-      orderId: req.body.orderId,
-    },
-  });
-
-  return res.send(response);
+  try {
+    const response = await PayPal.authorize({
+      amount: 1299,
+      currencyCode: 'EUR',
+      processorConfig: PayPal.configuration,
+      paymentMethod: {
+        orderId: req.body.orderId,
+      },
+    });
+    return res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 router.post('/capture', async (req, res) => {
@@ -37,12 +40,15 @@ router.post('/capture', async (req, res) => {
 });
 
 router.post('/cancel', async (req, res) => {
-  const response = await PayPal.cancel({
-    processorTransactionId: req.body.orderId,
-    processorConfig: PayPal.configuration,
-  });
-
-  return res.send(response);
+  try {
+    const response = await PayPal.cancel({
+      processorTransactionId: req.body.orderId,
+      processorConfig: PayPal.configuration,
+    });
+    return res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 server.use('/api', router);
