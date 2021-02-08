@@ -1,7 +1,7 @@
 # Checkout - Payment Methods
 
 ## Overview
-This is my submission for Primer's checkout challenge which implements PayPal's REST API along with its' client SDK.
+This is my submission for Primer's checkout challenge which implements PayPal's REST API along with its client SDK.
 
 This README will serve as documentation for the implemented integration and will also cover some of my findings and explain my thought process around the code I introduced.
 
@@ -34,15 +34,18 @@ You will be prompted to login into [PayPal's sandbox environment](https://www.sa
 If you do not have a [PayPal developers](https://developer.paypal.com/home) account, please sign up and log into the dashboard.
 Under SANDBOX -> Accounts, you will find two default, auto-generated sandbox accounts. Use the personal account details to log into [PayPal's sandbox environment](https://www.sandbox.paypal.com/signin).
 
-Back in the checkout directory, inside PayPal.ts, replace the accountId value inside the `configuration` object with your own sandbox accountId.
+Back in the checkout directory, inside PayPal.ts, replace the values inside the `configuration` object with your own sandbox account details.
 
 ```typescript
 configuration: {
     accountId: 'PUT YOUR ACCOUNTID HERE',
-    clientId: 'XXXXXXX',
-    clientSecret: 'XXXXXXX',
+    clientId: 'CLIENT ID',
+    clientSecret: 'SECRET',
   },
 ```
+*Included in the current PayPal.ts file is my current configuration setup with all the details already completed. This can be used for testing purposes. I can share a personal user sandbox account on request if required for testing.*
+
+*Ideally these account details need to be saved in a .env file, which would not be committed. This is to ensure that no one has access to your client secrets.*
 
 Then you're all set!
 
